@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "React App",
+            "type": "node",
+            "request": "launch",
+            "env": {
+                "HOST": "127.0.0.1"
+            },
+            "runtimeExecutable": "npm",
+            "args": ["run", "start"],
+            "cwd": "${workspaceFolder}", 
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Flask App",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "args": [
+                "--app", 
+                "main.py", 
+                "run",
+                "--debug"
+            ],
+            "jinja": true,
+            "cwd": "${workspaceFolder}/src_backend",
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "React + Flask",
+            "configurations": ["Flask App", "React App"]
+        }
+    ]
+}

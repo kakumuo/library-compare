@@ -3,8 +3,7 @@ import { IGameAggregateData, ISessionData, IUserData } from './types';
 import { api_getSession, api_searchUser, api_updateSession } from './api';
 
 
-const colorList = ["lightgreen", "lightblue", "lightorange", "lightgray", "lightbrown"]
-let colorListI = 0; 
+const colorList = ["lightgreen", "lightblue", "lightcoral", "lightyellow", "lightseagreen"]
 
 function App() {
   const [sessionData, setSessionData] = React.useState<ISessionData>({} as ISessionData)
@@ -27,6 +26,7 @@ function App() {
 
     const aggGameDataDict:{[key:number]:IGameAggregateData} = {}
     const tmpColorDict = Object.assign(userColorDict)
+    let colorListI = 0; 
     tmpSessionData.users.forEach(user => {
       user.games.forEach(game => {
           if(!(game.appid in aggGameDataDict)) {
@@ -129,16 +129,16 @@ function App() {
       </aside>
 
       {/* maincontent */}
-      <main style={{border: 'solid', width: '100%', display: 'grid'}}>
+      <main style={{border: 'solid', width: '100%', display: 'grid', padding: '8px'}}>
 
         {/* banner */}
-        <section style={{display: 'grid', gridTemplateColumns: '15vw 15vw', gridTemplateRows: '15vw', justifyContent: 'space-around'}}>
+        <section style={{display: 'grid', gridTemplateColumns: '15vw 15vw', gridTemplateRows: '15vw', justifyContent: 'space-around', padding: '8px'}}>
           <StatCard amount={gameAggData.length} amountType='number' text='Total Unique Games'/>
           <StatCard amount={gameAggData.reduce((total, cur) => total + cur.diversity, 0) / gameAggData.length * 100} amountType='percentage' text='Similar Games'/>
         </section>
 
         {/* search section */}
-        <section style={{display: 'grid', gridTemplateColumns: '1fr auto'}}>
+        <section style={{display: 'grid', gridTemplateColumns: '1fr auto', gridTemplateRows: 'auto auto', gap: '8px'}}>
           <input onKeyDown={(ev) => {
             if(ev.key == 'Enter' && ev.currentTarget.value.trim() != ""){
               handleFilterAdd(ev.currentTarget.value.trim())
@@ -147,7 +147,9 @@ function App() {
           }} />
           <button>Filters</button>
           {/* tag section */}
-          {searchFilters.length > 0 && <div>{searchFilters.map((filter, filterI) => <TextTag text={filter} onRemove={() => handleFilterRemove(filterI)} />)}</div>}
+          {searchFilters.length > 0 && <div style={{display: 'flex'}}>
+            {searchFilters.map((filter, filterI) => <TextTag text={filter} onRemove={() => handleFilterRemove(filterI)} />)}
+          </div>}
         </section>
 
         {/* game list */}
@@ -180,7 +182,7 @@ const StatCard = ({amount, amountType, text}:{amount:number, amountType:'number'
 }
 
 const TextTag = ({text, onRemove}:{text:string, onRemove?:()=>void}) => {
-  return <div>
+  return <div style={{display: 'grid', gridTemplateColumns: "1fr auto"}}>
     <p>{text}</p>
     {
       onRemove && <button onClick={onRemove}>x</button>
@@ -211,9 +213,25 @@ const GameListItem = ({gameData, userColorDict}:{gameData:IGameAggregateData, us
 
 const GamePlaytimeDisplay = ({userData, userColorDict, style={}}:{style?:React.CSSProperties,userData:IGameAggregateData['users'], userColorDict:{[key:string]:string}}) => {
   const totalHoursPlayed = userData.reduce((acc, cur) => acc + cur.playtime_forever, 0)
+  
   return <div style={{border: "solid", display: 'grid', gridTemplateColumns: userData.map(user => `${user.playtime_forever / totalHoursPlayed}fr`).join(' '), ...style}}>{
     userData.map(user => <div style={{backgroundColor: userColorDict[user.steamid]}} />)
   }</div>
+}
+
+const PlaytimeTooltip = ({userData, targetColor}:{userData:IGameAggregateData['users'][0], targetColor:string}) => {
+  const gridArea = `
+    'i i i n n n n'
+    'i i i p p p p'
+    'i i i t t t t'
+    'i i i l l l l'
+  `
+  return <div style={{display: 'grid', gridTemplateAreas: gridArea, backgroundColor: targetColor}}> 
+    <img style={{gridArea: 'i'}} src={userData.profileurl} />
+    <p style={{gridArea: 'n'}}>{userData.name}</p>
+    <p style={{gridArea: 't'}}>{userData.playtime_forever}</p>
+    <p style={{gridArea: 'l'}}>{userData.rtime_last_played}</p>
+  </div>
 }
 
 /*
