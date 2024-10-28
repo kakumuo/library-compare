@@ -1,0 +1,14 @@
+.title-med {
+    font-weight: bold;
+    font-size: large;
+}
+
+.title-small {
+    font-weight: bolder;
+    font-size: larger;
+}
+
+.subtext {
+    font-weight: lighter;
+    font-size: smaller;
+}

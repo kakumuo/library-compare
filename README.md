@@ -1,6 +1,7 @@
 # Overview
 
-Web app to compare steam libraries
+Web app to compare steam libraries and view playtimes between each user
+![alt text](image.png)
 
 # Libraries
 - Frontend
